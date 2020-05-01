@@ -1,0 +1,12 @@
+{
+    "vcenter_server":"10.117.227.72",
+    "username":"administrator@vsphere.local",
+    "password":"Password!",
+    "datastore":"NetApp-HCI-Datastore-01",
+    "cluster": "NetApp-HCI-Cluster-01",
+    "network": "NetApp HCI VDS 01-VM_Network",
+    "ssh_username": "ubuntu",
+    "ssh_password": "ubuntu",
+    "ssh_key_src_pub": "/Users/jdg/.ssh/id_rsa.pub",
+    "image_home_dir": "/home/"
+}
