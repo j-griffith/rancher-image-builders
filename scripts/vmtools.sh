@@ -2,5 +2,5 @@
 # Install open vm tools for vmware
 
 export DEBIAN_FRONTEND="noninteractive"
-apt-get -y update 
-apt-get install -y open-vm-tools
+sudo apt-get -y update 
+sudo apt-get install -y open-vm-tools

@@ -1,0 +1,10 @@
+{
+    "_comment": "Use country_code for simple local ISO downloads and distro updates. Use \"us\" (default) for the USA, \"jp\" for Japan, etc.",
+    "ssh_username": "ubuntu",
+    "ssh_password": "ubuntu",
+    "ssh_key_src_pub": "/home/sean/.ssh/id_rsa.pub",
+    "image_home_dir": "/home/",
+    "country_code": "us",
+    "guest_vcpu": "1",
+    "guest_vram": "1024"
+}

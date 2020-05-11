@@ -31,5 +31,5 @@ ff02::3 ip6-allhosts
 EOF
 
 # Comment out swap line so node can handle reboot without manual intervention
-
+swapoff -a
 sed -e '/swap/ s/^#*/#/' -i /etc/fstab

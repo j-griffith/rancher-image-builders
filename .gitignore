@@ -1,11 +1,17 @@
 # Cache objects
 packer_cache/
 
-# Crash log
-crash.log
+# Crash logs
+*.log
 
 # For built boxes
 *.box
 _output
 images
 *.ova
+*.box
+
+# Local user files
+.vagrant
+variables.json
+variables-vbox.json

@@ -103,20 +103,64 @@
         ],
         "boot_wait": "10s",
         "output_directory": "_output/vmware/"
+      },
+      {
+        "type": "virtualbox-iso",
+        "format": "ova",
+        "vm_name": "rke-ubuntu",
+        "guest_os_type": "Ubuntu_64",
+        "guest_additions_mode": "upload",
+        "hard_drive_discard": "True",
+        "hard_drive_nonrotational": "True",
+        "ssh_username": "{{user `ssh_username`}}",
+        "ssh_password": "{{user `ssh_password`}}",
+        "ssh_timeout": "1000s",
+        "disk_size": 10737,
+        "cpus": "{{user `guest_vcpu`}}",
+        "memory": "{{user `guest_vram`}}",
+	      "vboxmanage": [
+          ["modifyvm", "{{.Name}}", "--vram", "20"], 
+          ["modifyvm", "{{.Name}}", "--graphicscontroller", "vmsvga"]],
+        "iso_url": "http://{{user `country_code`}}.releases.ubuntu.com/18.04.4/ubuntu-18.04.4-live-server-amd64.iso",
+        "iso_checksum": "e2ecdace33c939527cbc9e8d23576381c493b071107207d2040af72595f8990b",
+        "iso_checksum_type": "sha256",
+        "http_directory": "./http/",
+        "headless": true,      
+        "floppy_files": [
+          "./http/preseed_server.cfg"
+        ],
+        "boot_command": [
+          "<enter><wait><f6><wait><esc><wait>",
+          "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+          "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+          "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+          "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+          "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+          "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+          "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+          "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+          "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+          "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+          "<bs><bs><bs>",
+          "/install/vmlinuz",
+          " initrd=/install/initrd.gz",
+          " priority=critical",
+          " locale=en_US",
+          " console-setup/ask_detect=false",
+          " keyboard-configuration/layout=USA",
+          " keyboard-configuration/variant=USA",
+          " file=/media/preseed_server.cfg",
+          "<enter>"
+        ],
+        "boot_wait": "10s",
+        "output_directory": "_output/virtualbox-rke/",
+        "shutdown_command": "echo '{{user `ssh_password`}}' | sudo -S shutdown -P now"
       }
     ],
     "provisioners": [
     {
-      "type": "shell",
-      "scripts": [
-      "scripts/vmtools.sh"
-      ],
-      "execute_command": "{{.Vars}} sudo -E -S bash '{{.Path}}'"
-    },
-    {
       "scripts": [
         "scripts/packages.sh",
-        "scripts/cloud-init.sh",
         "scripts/bootloader.sh",
         "scripts/network-config.sh",
         "scripts/docker.sh",
@@ -150,6 +194,33 @@
         "sudo chmod 700 {{user `image_home_dir`}}{{user `ssh_username`}}/.ssh",
         "sudo chmod 600 {{user `image_home_dir`}}{{user `ssh_username`}}/.ssh/authorized_keys"
         ]
+    },
+    { "type": "shell",
+      "inline": [ "sudo sed \"s/us.archive/{{user `country_code`}}.archive/g\" -i /etc/apt/sources.list; sudo apt update" ],
+      "only": ["virtualbox-iso"]
+    },
+    {
+      "type": "shell",
+      "scripts": [
+      "scripts/vmtools.sh"
+      ],
+      "execute_command": "{{.Vars}} sudo -E -S bash '{{.Path}}'"
+    },
+    {
+      "type": "shell",
+      "scripts": [
+        "scripts/cloud-init-vmware.sh"
+      ],
+      "execute_command": "{{.Vars}} sudo -E -S bash '{{.Path}}'",
+      "only": ["vmware-iso", "vsphere-iso"]
+    },
+    {
+      "type": "shell",
+      "scripts": [
+        "scripts/cloud-init-vbox.sh"
+      ],
+      "execute_command": "{{.Vars}} sudo -E -S bash '{{.Path}}'",
+      "only": ["virtualbox-iso"]
     },
     {
       "type": "shell",
